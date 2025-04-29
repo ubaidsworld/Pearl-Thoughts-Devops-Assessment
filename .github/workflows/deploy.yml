@@ -32,7 +32,7 @@ jobs:
       - name: Connect to EC2 A and run Ansible on EC2 B
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.ANSIBLE_HOST_IP }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
@@ -43,7 +43,7 @@ jobs:
             # Create a temporary inventory
             cat > inventory.ini <<EOF
             [target]
-            ec2-b ansible_host=<EC2_B_IP> ansible_user=ubuntu ansible_ssh_private_key_file=~/target_key
+            ec2-b ansible_host=${{ secrets.DEPLOY_EC_IP }} ansible_user=ubuntu ansible_ssh_private_key_file=~/target_key
             EOF
 
             # Run Ansible ping test
