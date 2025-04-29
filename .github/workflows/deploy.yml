@@ -25,6 +25,29 @@ jobs:
             else
               echo "Ansible is already installed."
             fi
+  setup-ansible-connection-with-target:
+    runs-on: ubuntu-latest
+    needs: check-ansible
+    steps:
+      - name: Connect to EC2 A and run Ansible on EC2 B
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Save TARGET_SSH_KEY into a file
+            echo "${{ secrets.TARGET_SSH_KEY }}" > ~/target_key
+            chmod 600 ~/target_key
+
+            # Create a temporary inventory
+            cat > inventory.ini <<EOF
+            [target]
+            ec2-b ansible_host=<EC2_B_IP> ansible_user=ubuntu ansible_ssh_private_key_file=~/target_key
+            EOF
+
+            # Run Ansible ping test
+            ansible all -i inventory.ini -m ping
   # deploy:
   #   runs-on: ubuntu-latest
 
