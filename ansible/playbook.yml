@@ -25,50 +25,50 @@
     - name: Initialize Docker Swarm
       shell: docker swarm init || true
 
-	- name: Ensure NGINX directories exist (for Debian/Ubuntu layout)
-	  file:
-		path: "{{ item }}"
-		state: directory
-	  loop:
-		- /etc/nginx/sites-available
-		- /etc/nginx/sites-enabled
+    - name: Ensure NGINX directories exist (for Debian/Ubuntu layout)
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /etc/nginx/sites-available
+        - /etc/nginx/sites-enabled
 
-	- name: Copy NGINX config for Yii2
-	  copy:
-		src: ../nginx/yii2.conf
-		dest: /etc/nginx/sites-available/yii2.conf
-		mode: '0644'
+    - name: Copy NGINX config for Yii2
+      copy:
+        src: ../nginx/yii2.conf
+        dest: /etc/nginx/sites-available/yii2.conf
+        mode: '0644'
 
-	- name: Enable the Yii2 site (symlink to sites-enabled)
-	  file:
-		src: /etc/nginx/sites-available/yii2.conf
-		dest: /etc/nginx/sites-enabled/yii2.conf
-		state: link
-		force: true
+    - name: Enable the Yii2 site (symlink to sites-enabled)
+      file:
+        src: /etc/nginx/sites-available/yii2.conf
+        dest: /etc/nginx/sites-enabled/yii2.conf
+        state: link
+        force: true
 
-	- name: Test NGINX configuration
-	  command: nginx -t
-	  register: nginx_test
-	  failed_when: "'successful' not in nginx_test.stderr"
+    - name: Test NGINX configuration
+      command: nginx -t
+      register: nginx_test
+      failed_when: "'successful' not in nginx_test.stderr"
 
-	- name: Reload NGINX if test passed
-	  systemd:
-		name: nginx
-		state: reloaded
-	  when: "'successful' in nginx_test.stderr"
+    - name: Reload NGINX if test passed
+      systemd:
+        name: nginx
+        state: reloaded
+      when: "'successful' in nginx_test.stderr"
 
-	- name: Install Certbot and NGINX plugin
-	  apt:
-		name:
-		  - certbot
-		  - python3-certbot-nginx
-		state: present
-		update_cache: yes
+    - name: Install Certbot and NGINX plugin
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+        update_cache: yes
 
-	- name: Obtain SSL cert for DuckDNS subdomain
-	  command: >
-		certbot --nginx --non-interactive --agree-tos
-		-m ubaidullah244@gmail.com
-		-d yii2-dev.duckdns.org
-	  args:
-		creates: /etc/letsencrypt/live/yii2-dev.duckdns.org/fullchain.pem
+    - name: Obtain SSL cert for DuckDNS subdomain
+      command: >
+        certbot --nginx --non-interactive --agree-tos
+        -m ubaidullah244@gmail.com
+        -d yii2-dev.duckdns.org
+      args:
+        creates: /etc/letsencrypt/live/yii2-dev.duckdns.org/fullchain.pem
