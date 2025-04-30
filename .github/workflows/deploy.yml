@@ -68,7 +68,7 @@ jobs:
             sed -i 's|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/yii2-app:latest|' docker-compose.yml
             
             # Deploy stack (assumes Swarm is initialized)
-            docker service update --image ubaidsworld/yii2-app:latest yii2app_stack_app || \
+            docker service update --image ${{ secrets.DOCKER_USERNAME }}/yii2-app:latest yii2app_stack_app || \
             docker stack deploy -c docker-compose.yml yii2app_stack
 
 
