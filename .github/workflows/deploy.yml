@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  check_Ansible_and_run_playbook:
+  Install_Dependency_Run_Playbook:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -22,76 +22,35 @@ jobs:
     - name: Run Ansible Playbook
       run: |
         ansible-playbook -i "${{ secrets.DEPLOY_EC_IP }}," ansible/playbook.yml -u ${{ secrets.EC2_USER }} --private-key ~/.ssh/id_rsa
-        # check-ansible:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check and install Ansible on EC2
-  #       uses: appleboy/ssh-action@v1.0.3
-  #       with:
-  #         host: ${{ secrets.ANSIBLE_HOST_IP }}
-  #         username: ${{ secrets.EC2_USER }}
-  #         key: ${{ secrets.EC2_SSH_KEY }}
-  #         script: |
-  #           if ! command -v ansible >/dev/null 2>&1; then
-  #             echo "Ansible not found. Installing..."
-  #             $ sudo apt update
-  #             $ sudo apt install software-properties-common
-  #             $ sudo add-apt-repository --yes --update ppa:ansible/ansible
-  #             $ sudo apt install ansible
-  #           else
-  #             echo "Ansible is already installed."
-  #           fi
-  # setup-ansible-connection-with-target:
-  #   runs-on: ubuntu-latest
-  #   needs: check-ansible
-  #   steps:
-  #     - name: Connect to EC2 A and run Ansible on EC2 B
-  #       uses: appleboy/ssh-action@v1.0.3
-  #       with:
-  #         host: ${{ secrets.ANSIBLE_HOST_IP }}
-  #         username: ${{ secrets.EC2_USER }}
-  #         key: ${{ secrets.EC2_SSH_KEY }}
-  #         script: |
-  #           # Save TARGET_SSH_KEY into a file
-  #           echo "${{ secrets.TARGET_SSH_KEY }}" > ~/target_key
-  #           chmod 600 ~/target_key
 
-  #           # Create a temporary inventory
-  #           cat > inventory.ini <<EOF
-  #           [target]
-  #           ec2-b ansible_host=${{ secrets.DEPLOY_EC_IP }} ansible_user=ubuntu ansible_ssh_private_key_file=~/target_key
-  #           EOF
+  deploy:
+    runs-on: ubuntu-latest
+    needs: Install_Dependency_Run_Playbook
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #           # Run Ansible ping test
-  #           ansible all -i inventory.ini -m ping
-  # deploy:
-  #   runs-on: ubuntu-latest
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/yii2-app:latest
 
-  #     - name: Log in to Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
-
-  #     - name: Build and push Docker image
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         push: true
-  #         tags: ${{ secrets.DOCKER_USERNAME }}/yii2-app:latest
-
-      # - name: SSH into EC2 and Deploy
-      #   uses: appleboy/ssh-action@v0.1.10
-      #   with:
-      #     host: ${{ secrets.EC2_HOST }}
-      #     username: ${{ secrets.EC2_USER }}
-      #     key: ${{ secrets.EC2_SSH_KEY }}
-      #     script: |
-      #       docker service update --image your-dockerhub-username/yii2-app:latest yii2-app || \
-      #       docker service create --name yii2-app --publish 9000:9000 your-dockerhub-username/yii2-app:latest
+      - name: SSH into EC2 and Deploy
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DEPLOY_EC_IP }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker service update --image ${{ secrets.DOCKER_USERNAME }}/yii2-app:latest yii2-app || \
+            docker service create --name yii2-app --publish 9000:9000 ${{ secrets.DOCKER_USERNAME }}/yii2-app:latest
