@@ -1,0 +1,36 @@
+# ansible/playbook.yml
+- name: Setup server for Yii2 App
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+          - nginx
+          - php
+          - php-fpm
+          - git
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Initialize Docker Swarm
+      shell: docker swarm init || true
+
+    - name: Copy NGINX config
+      copy:
+        src: ../nginx/yii2.conf
+        dest: /etc/nginx/conf.d/yii2.conf
+
+    - name: Restart NGINX
+      systemd:
+        name: nginx
+        state: restarted
