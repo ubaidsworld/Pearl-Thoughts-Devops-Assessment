@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    image: ubaidsworld/yii2-app:latest
+    image: ubaidullah244/yii2-app:latest
     ports:
       - "8080:80"
     networks:
