@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  check_Ansible_andrun_playbook:
+  check_Ansible_and_run_playbook:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -17,11 +17,11 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan -H ${{ secrets.DEPLOY_EC_IP }} >> ~/.ssh/known_hosts
 
     - name: Run Ansible Playbook
       run: |
-        ansible-playbook -i "${{ secrets.EC2_HOST }}," ansible/playbook.yml -u ${{ secrets.EC2_USER }} --private-key ~/.ssh/id_rsa
+        ansible-playbook -i "${{ secrets.DEPLOY_EC_IP }}," ansible/playbook.yml -u ${{ secrets.EC2_USER }} --private-key ~/.ssh/id_rsa
         # check-ansible:
   #   runs-on: ubuntu-latest
   #   steps:
