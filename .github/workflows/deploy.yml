@@ -58,7 +58,7 @@ jobs:
             cd ~/yii2-deploy
 
             # Pull latest code
-            git clone https://github.com/<your-repo>/yii2-app-basic.git repo || true
+            git clone https://github.com/ubaidsworld/Pearl-Thoughts-Devops-Assessment.git repo || true
             cd repo
             git pull origin main
 
