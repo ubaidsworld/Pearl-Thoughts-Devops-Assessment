@@ -21,7 +21,20 @@
         name: docker
         enabled: yes
         state: started
-
+    - name: Add user to Docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+        
+    - name: Reboot to apply group change (optional, safer manually)
+      reboot:
+        msg: "Rebooting to apply docker group changes"
+        pre_reboot_delay: 5
+        reboot_timeout: 300
+        post_reboot_delay: 10
+      when: ansible_facts['os_family'] == "Debian"
+      
     - name: Initialize Docker Swarm
       shell: docker swarm init || true
 
