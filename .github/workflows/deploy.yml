@@ -1,9 +1,10 @@
 name: CI/CD for Yii2 App
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
   check-ansible:
