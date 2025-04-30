@@ -12,16 +12,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup SSH key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.DEPLOY_EC_IP }} >> ~/.ssh/known_hosts
+    # - name: Setup SSH key
+    #   run: |
+    #     mkdir -p ~/.ssh
+    #     echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+    #     chmod 600 ~/.ssh/id_rsa
+    #     ssh-keyscan -H ${{ secrets.DEPLOY_EC_IP }} >> ~/.ssh/known_hosts
 
-    - name: Run Ansible Playbook
-      run: |
-        ansible-playbook -i "${{ secrets.DEPLOY_EC_IP }}," ansible/playbook.yml -u ${{ secrets.EC2_USER }} --private-key ~/.ssh/id_rsa
+    # - name: Run Ansible Playbook
+    #   run: |
+    #     ansible-playbook -i "${{ secrets.DEPLOY_EC_IP }}," ansible/playbook.yml -u ${{ secrets.EC2_USER }} --private-key ~/.ssh/id_rsa
 
   deploy:
     runs-on: ubuntu-latest
