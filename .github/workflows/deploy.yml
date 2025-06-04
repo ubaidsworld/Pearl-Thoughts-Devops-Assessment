@@ -32,4 +32,4 @@ jobs:
 
       - name: Run Ansible Playbook
         run: |
-          ansible-playbook -i inventory/hosts.ini update-ubuntu.yml
+          ansible-playbook -i inventory/hosts.ini Ansible/playbook.yml
