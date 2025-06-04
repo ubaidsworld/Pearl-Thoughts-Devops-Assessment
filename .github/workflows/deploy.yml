@@ -1,0 +1,35 @@
+name: Run Ansible Playbook on EC2
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python and Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip
+          pip3 install ansible
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create dynamic inventory
+        run: |
+          mkdir -p inventory
+          echo "[ec2]" > inventory/hosts.ini
+          echo "${{ secrets.EC2_HOST }} ansible_user=${{ secrets.EC2_USER }}" >> inventory/hosts.ini
+
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook -i inventory/hosts.ini update-ubuntu.yml
