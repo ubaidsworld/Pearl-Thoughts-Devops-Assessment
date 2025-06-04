@@ -1,0 +1,17 @@
+- name: System requirements checking file 
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600  # refresh cache if older than 1 hour
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+
+    - name: Autoremove unnecessary packages
+      apt:
+        autoremove: yes
+        purge: yes
