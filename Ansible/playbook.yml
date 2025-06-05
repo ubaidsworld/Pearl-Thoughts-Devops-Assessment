@@ -73,20 +73,10 @@
         
     - name: Configure NGINX reverse proxy for Yii2
       copy:
+        src: ../Nginx/yii2          # relative path from playbook location to config file
         dest: /etc/nginx/sites-available/yii2
-        content: |
-          server {
-              listen 80;
-              server_name pearlthoughts.duckdns.org;
+        mode: '0644'
 
-              location / {
-                  proxy_pass http://localhost:8000;
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto $scheme;
-              }
-          }
 
     - name: Enable Yii2 NGINX config
       file:
