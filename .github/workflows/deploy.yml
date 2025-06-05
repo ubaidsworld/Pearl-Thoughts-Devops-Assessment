@@ -1,7 +1,7 @@
 name: Run Ansible Playbook on EC2
 
 on:
-  workflow_dispatch:
+  push
 
 jobs:
   App_Docker_Build_and_Push:
