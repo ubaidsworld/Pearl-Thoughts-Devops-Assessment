@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-push:
+  App_Docker_Build_and_Push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout your repo (to get the Dockerfile)
