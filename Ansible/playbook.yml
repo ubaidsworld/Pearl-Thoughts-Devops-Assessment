@@ -1,6 +1,10 @@
 - name: System requirements checking file 
   hosts: all
   become: yes
+  
+  vars:
+   app_dir: /opt/yii2-app
+    
   tasks:
     - name: Update apt cache
       apt:
