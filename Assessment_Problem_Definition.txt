@@ -1,0 +1,54 @@
+DevOps Assessment
+🚀 DevOps Assessment Task – Yii2 + Docker Swarm + CI/CD + Ansible
+
+Objective:
+Deploy a sample PHP Yii2 application using Docker Swarm and NGINX (host-based reverse proxy) on an AWS EC2 instance. Automate setup using Ansible and implement CI/CD via GitHub Actions.
+
+---
+
+🛠 Task Breakdown:
+
+1. Application Deployment
+
+* Use a sample Yii2 PHP application (can be minimal or from GitHub).
+* Set up Docker Swarm mode on the EC2 instance.
+* Containerize the Yii2 application using Docker.
+* NGINX should run on the host, not in a container, and act as a reverse proxy to the Docker container(s).
+
+2. CI/CD with GitHub Actions
+
+* Trigger pipeline on push to main branch.
+* Build and push Docker image to Docker Hub or GitHub Container Registry.
+* SSH into the EC2 server.
+* Pull the new image and update the Docker Swarm service.
+* Optional: Implement rollback on failure.
+
+3. Infrastructure Automation with Ansible
+
+* Write Ansible playbook(s) to:
+  * Install Docker, Docker Compose
+  * Install NGINX, Git, PHP dependencies (if needed)
+  * Initialize Docker Swarm
+  * Configure NGINX with a reverse proxy to your Yii2 app
+  * Clone the repo (if needed)
+  * Deploy the app as a Swarm service
+
+4. Deliverables
+
+* GitHub repo with:
+  * Dockerfile, docker-compose.yml
+  * Ansible playbooks
+  * .github/workflows/deploy.yml (GitHub Actions)
+  * NGINX configuration file
+  * README explaining:
+    * Setup instructions
+    * Assumptions
+    * How to test deployment
+
+---
+
+🎯 Bonus Points
+
+* Use GitHub Secrets for environment variables or SSH keys.
+* Add health checks in your Docker setup.
+* Add Prometheus + Node Exporter for basic monitoring.
