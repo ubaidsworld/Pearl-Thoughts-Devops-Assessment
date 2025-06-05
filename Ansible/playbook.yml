@@ -15,6 +15,7 @@
       apt:
         autoremove: yes
         purge: yes
+    
     - name: Check if Docker is installed
       command: which docker
       register: docker_check
@@ -64,7 +65,6 @@
         src: ../Nginx/yii2          # relative path from playbook location to config file
         dest: /etc/nginx/sites-available/yii2
         mode: '0644'
-
 
     - name: Enable Yii2 NGINX config
       file:
