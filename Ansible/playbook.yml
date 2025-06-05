@@ -3,7 +3,7 @@
   become: yes
   
   vars:
-   app_dir: /opt/yii2-app
+   app_dir: /opt/yii2-app  # ✅ Define this path here
     
   tasks:
     - name: Update apt cache
@@ -99,11 +99,14 @@
         path: "{{ app_dir }}"
         state: directory
 
-    - name: Copy repo contents to EC2
-      copy:
+    - name: Copy repo contents to EC2 (excluding .git/.github)
+      ansible.builtin.synchronize:
         src: "{{ playbook_dir }}/../"
         dest: "{{ app_dir }}"
-        exclude: [".git", ".github"]
+        delete: yes
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=.github"
 
     - name: Deploy the app using docker stack
       shell: docker stack deploy -c {{ app_dir }}/docker-compose.yml yii2app
