@@ -15,6 +15,7 @@ jobs:
 
       - name: Build Docker image
         run: |
+          cd yii2-app-basic
           docker build -t ${{ secrets.DOCKER_USERNAME }}/yii2-app-basic:latest .
 
       - name: Log in to Docker Hub
