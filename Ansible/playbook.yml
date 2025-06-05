@@ -89,7 +89,8 @@
         docker info | grep -q 'Swarm: active' || docker swarm init
       args:
         executable: /bin/bash
-        - name: Create app directory on EC2
+    
+    - name: Create app directory on EC2
       file:
         path: "{{ app_dir }}"
         state: directory
@@ -101,5 +102,4 @@
         exclude: [".git", ".github"]
 
     - name: Deploy the app using docker stack
-      shell: docker stack deploy -c {{ app_dir }}/docker-compose.yml yii2apps
-      
+      shell: docker stack deploy -c {{ app_dir }}/docker-compose.yml yii2app
